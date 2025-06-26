@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Realizzazioni – TecnoGroup S.r.l</title>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- VanillaTilt -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --primary:   #8E2DE2;
+      --secondary: #4A00E0;
+      --accent:    #FF8C00;
+      --bg:        #f0f4fd;
+      --text:      #333;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+    a { text-decoration:none; color:inherit; }
+
+    /* SLICE VIOLA */
+    .purple-slice {
+      position:absolute;
+      top:30vh;
+      left:-20%;
+      width:140%;
+      height:40vh;
+      background:var(--secondary);
+      transform:rotate(-3deg);
+      z-index:1;
+    }
+
+    /* INTRO 3D */
+    #intro3d { position:fixed; top:0; left:0; width:100vw; height:100vh;
+      display:flex; align-items:center; justify-content:center; z-index:2000; pointer-events:none;
+      perspective:1200px;
+    }
+    #intro3d h1 {
+      font-size:10vw; color:#fff; text-transform:uppercase; letter-spacing:.5rem;
+      transform:scale(0.5);
+      animation:
+        grow 2s ease-out forwards,
+        shimmer 1.5s ease-in-out .5s infinite,
+        fadeOut 1s ease-in 2.5s forwards;
+    }
+    @keyframes grow {
+      0% { transform:scale(.5) translateZ(-300px); opacity:0; }
+      100% { transform:scale(1)   translateZ( 50px); opacity:1; }
+    }
+    @keyframes shimmer {
+      0%,100% { text-shadow:0 0 10px #fff; }
+      50%     { text-shadow:0 0 30px #fff; }
+    }
+    @keyframes fadeOut { to { opacity:0; visibility:hidden; } }
+
+    /* HEADER */
+    header { position:fixed; top:0; width:100%; display:flex; align-items:center;
+      justify-content:space-between; padding:1rem 2rem; background:rgba(255,255,255,0.8);
+      backdrop-filter:blur(10px); z-index:999; transition:.4s;
+    }
+    header.scrolled { background:#fff; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+    .logo { font-size:1.6rem; font-weight:600; color:var(--primary); cursor:pointer; }
+    nav { display:flex; gap:1.5rem; }
+    nav a { position:relative; padding:.5rem; font-weight:500; }
+    nav a::after { content:''; position:absolute; bottom:0; left:50%; width:0; height:3px;
+      background:var(--accent); transform:translateX(-50%); transition:width .3s;
+    }
+    nav a:hover::after { width:70%; }
+    .burger { display:none; cursor:pointer; }
+    .burger div { width:28px; height:3px; background:var(--primary); margin:5px 0; transition:.4s; }
+    @media(max-width:768px) {
+      nav { position:fixed; top:0; right:-100%; height:100%; width:60%; background:#fff;
+        flex-direction:column; align-items:center; padding-top:6rem; transition:.4s;
+      }
+      nav.open { right:0; }
+      .burger { display:block; }
+    }
+
+    /* HERO TESTO */
+    .hero-real {
+      position:relative; z-index:2; margin-top:4rem;
+      padding:4rem 2rem; text-align:center; color:#fff;
+      background:var(--secondary);
+    }
+    .hero-real h1 { font-size:3rem; margin-bottom:1rem; }
+    .hero-real p { font-size:1.2rem; max-width:600px; margin:0 auto; }
+
+    /* RICERCA & FILTRI */
+    .controls {
+      position:relative; z-index:2;
+      display:flex; justify-content:center; gap:1rem;
+      flex-wrap:wrap; padding:2rem;
+    }
+    .controls input {
+      padding:.5rem 1rem; border:2px solid #ddd; border-radius:20px;
+      outline:none; transition:border .3s; flex:1 1 200px;
+    }
+    .controls input:focus { border-color:var(--primary); }
+    .controls button {
+      padding:.5rem 1rem; border:none; border-radius:20px;
+      background:#fff; color:var(--primary); cursor:pointer;
+      transition:background .3s;
+    }
+    .controls button.active,
+    .controls button:hover {
+      background:var(--accent); color:#fff;
+    }
+
+    /* GALLERY */
+    .gallery {
+      position:relative; z-index:2;
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:1.5rem; padding:4rem 2rem;
+    }
+    .item {
+      position:relative; overflow:hidden; border-radius:12px; cursor:pointer;
+      opacity:0; transform:translateY(30px);
+      animation:fadeUpItem .5s ease-out forwards;
+    }
+    @keyframes fadeUpItem { to { transform:translateY(0); opacity:1; } }
+    .item img {
+      width:100%; display:block; transition:transform .5s,filter .5s;
+    }
+    .item:hover img {
+      transform:scale(1.1) translateY(-10px); filter:brightness(1.1);
+    }
+    .overlay {
+      position:absolute; inset:0; background:rgba(0,0,0,0.4); opacity:0;
+      transition:opacity .3s; display:flex; align-items:center; justify-content:center;
+    }
+    .item:hover .overlay { opacity:1; }
+    .overlay h3 {
+      color:#fff; font-size:1.4rem; text-shadow:0 0 10px rgba(0,0,0,0.7);
+    }
+
+    /* LIGHTBOX */
+    #lightbox {
+      position:fixed; top:0; left:0; width:100vw; height:100vh;
+      background:rgba(0,0,0,0.8); display:none;
+      align-items:center; justify-content:center; z-index:3000;
+      flex-direction:column;
+    }
+    #lightbox img {
+      max-width:90%; max-height:80%;
+      border-radius:8px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    }
+    #lightbox .caption {
+      margin-top:1rem; color:#fff; font-size:1.2rem;
+    }
+
+    /* TORNA SU */
+    #backTop {
+      position:fixed; bottom:1.5rem; right:1.5rem;
+      background:var(--accent); color:#fff; border:none;
+      padding:.75rem; border-radius:50%; cursor:pointer;
+      display:none; z-index:1000; transition:transform .3s;
+    }
+    #backTop:hover { transform:scale(1.1); }
+
+    html { scroll-behavior:smooth; }
+  </style>
+</head>
+
+<body>
+
+  <!-- SLICE VIOLA -->
+  <div class="purple-slice"></div>
+
+  <!-- INTRO 3D -->
+  <div id="intro3d"><h1>Realizzazioni</h1></div>
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="logo" onclick="location.href='index.html'">TecnoGroup S.r.l</div>
+    <nav id="nav">
+      <a href="index.html">Home</a>
+      <a href="contacts.html">Contatti</a>
+      <a href="realizzazioni.html">Realizzazioni</a>
+    </nav>
+    <div class="burger" id="burger"><div></div><div></div><div></div></div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-real" data-aos="fade-down">
+    <h1>Alcune nostre realizzazioni</h1>
+    <p>Scopri i progetti più innovativi realizzati per i nostri clienti di cucina professionale.</p>
+  </section>
+
+  <!-- RICERCA & FILTRI -->
+  <div class="controls" data-aos="fade-up">
+    <input id="search" type="text" placeholder="Cerca progetto..." />
+    <button class="filter-btn active" data-cat="all">Tutti</button>
+    <button class="filter-btn" data-cat="cucina">Cucina</button>
+    <button class="filter-btn" data-cat="hotel">Hotel</button>
+    <button class="filter-btn" data-cat="gelateria">Gelaterie</button>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="gallery" id="gallery">
+    <div class="item" data-cat="cucina" data-title="Cucina IIS Antonio Remondini">
+      <img loading="lazy" src="https://cdn.discordapp.com/attachments/1387764728235032747/1387873544800702686/Immagine_WhatsApp_2025-06-26_ore_21.10.44_3e9d70f6.jpg?ex=685eed76&is=685d9bf6&hm=7952164eb099bc9b126d0141a7fbe22bdd610446a0dd7b801186d1e836961159&" alt="Cucina IIS Antonio Remondini"/>
+      <div class="overlay"><h3>Cucina IIS Antonio Remondini</h3></div>
+    </div>
+    <div class="item" data-cat="hotel" data-title="Altre realizzazioni">
+      <img loading="lazy" src="https://source.unsplash.com/400x300/?hotel,kitchen" alt="Altre realizzazioni"/>
+      <div class="overlay"><h3>Altre realizzazioni</h3></div>
+    </div>
+    <div class="item" data-cat="gelateria" data-title="Altre realizzazioni">
+      <img loading="lazy" src="https://source.unsplash.com/400x300/?gelato,shop" alt="Altre realizzazioni"/>
+      <div class="overlay"><h3>Altre realizzazioni</h3></div>
+    </div>
+    <div class="item" data-cat="ristorante" data-title="Altre realizzazioni">
+      <img loading="lazy" src="https://source.unsplash.com/400x300/?chef,restaurant" alt="Altre realizzazioni"/>
+      <div class="overlay"><h3>Altre realizzazioni</h3></div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox">
+    <img src="" alt=""/>
+    <div class="caption"></div>
+  </div>
+
+  <!-- TORNA SU -->
+  <button id="backTop">⇡</button>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration:800, once:true });
+
+    // Rimuovi intro
+    setTimeout(()=> document.getElementById('intro3d').remove(), 3000);
+
+    // Header + backTop
+    const header = document.getElementById('header'),
+          back   = document.getElementById('backTop');
+    window.addEventListener('scroll', ()=>{
+      header.classList.toggle('scrolled', window.scrollY>50);
+      back.style.display = window.scrollY>300 ? 'block' : 'none';
+    });
+    back.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+
+    // Mobile menu
+    const burger = document.getElementById('burger'),
+          nav    = document.getElementById('nav');
+    burger.addEventListener('click', ()=> nav.classList.toggle('open'));
+    nav.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=> nav.classList.remove('open')));
+
+    // Filter & Search
+    const buttons = document.querySelectorAll('.filter-btn'),
+          items   = document.querySelectorAll('.item'),
+          search  = document.getElementById('search');
+    function applyFilter(){
+      const cat  = document.querySelector('.filter-btn.active').dataset.cat,
+            term = search.value.toLowerCase();
+      items.forEach(it=>{
+        const okCat = (cat==='all') || it.dataset.cat===cat,
+              okTxt = it.dataset.title.toLowerCase().includes(term);
+        if(okCat && okTxt){
+          it.style.display='block';
+          gsap.to(it,{opacity:1,y:0,duration:0.5});
+        } else {
+          it.style.display='none';
+        }
+      });
+    }
+    buttons.forEach(b=>b.addEventListener('click', ()=>{
+      buttons.forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      applyFilter();
+    }));
+    search.addEventListener('input', applyFilter);
+
+    // Tilt & entrance
+    VanillaTilt.init(document.querySelectorAll(".item"),{ max:15, speed:400, glare:true, "max-glare":0.3 });
+    gsap.from('.item',{ y:50, opacity:0, duration:0.6, stagger:0.2, delay:0.5 });
+
+    // Lightbox
+    const light = document.getElementById('lightbox'),
+          lbImg = light.querySelector('img'),
+          cap   = light.querySelector('.caption');
+    items.forEach(it=>{
+      it.addEventListener('click', ()=>{
+        lbImg.src      = it.querySelector('img').src;
+        cap.textContent = it.dataset.title;
+        light.style.display = 'flex';
+        gsap.fromTo(lbImg,{scale:0.5,opacity:0},{scale:1,opacity:1,duration:0.4});
+      });
+    });
+    light.addEventListener('click', ()=> light.style.display='none');
+  </script>
+</body>
+</html>
